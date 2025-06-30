@@ -1,5 +1,6 @@
 # mypy: disable - error - code = "no-untyped-def,misc"
 import pathlib
+import os
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -16,7 +17,8 @@ def create_frontend_router(build_dir="../frontend/dist"):
     Returns:
         A Starlette application serving the frontend.
     """
-    build_path = pathlib.Path(__file__).parent.parent.parent / build_dir
+    project_root = pathlib.Path(__file__).resolve().parents[3]
+    build_path = project_root / build_dir
 
     if not build_path.is_dir() or not (build_path / "index.html").is_file():
         print(
