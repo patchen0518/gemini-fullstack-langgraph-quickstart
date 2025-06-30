@@ -7,7 +7,7 @@ from langgraph.types import Send
 from langgraph.graph import StateGraph
 from langgraph.graph import START, END
 from langchain_core.runnables import RunnableConfig
-from google.genai import Client
+from google.genai import Client, types
 
 from agent.state import (
     OverallState,
@@ -111,14 +111,22 @@ def web_research(state: WebSearchState, config: RunnableConfig) -> OverallState:
         research_topic=state["search_query"],
     )
 
+    #Define grounding tool use
+    grounding_tool = types.Tool(
+        google_search=types.GoogleSearch(),
+    )
+
+    #Setup config
+    config = types.GenerateContentConfig(
+        tools=[grounding_tool],
+        temperature=0,
+    )
+
     # Uses the google genai client as the langchain client doesn't return grounding metadata
     response = genai_client.models.generate_content(
         model=configurable.query_generator_model,
         contents=formatted_prompt,
-        config={
-            "tools": [{"google_search": {}}],
-            "temperature": 0,
-        },
+        config=config,
     )
     # resolve the urls to short urls for saving tokens and time
     resolved_urls = resolve_urls(
