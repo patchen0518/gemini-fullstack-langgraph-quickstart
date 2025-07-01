@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from agent.tools_and_schemas import SearchQueryList, Reflection
 from dotenv import load_dotenv
@@ -299,3 +300,16 @@ builder.add_conditional_edges(
 builder.add_edge("finalize_answer", END)
 
 graph = builder.compile(name="pro-search-agent")
+
+# save the flow image to file
+search_flow = graph.get_graph().draw_mermaid_png()
+save_dir = os.path.join(os.path.dirname(__file__), "_langgraph_flow")
+os.makedirs(save_dir, exist_ok=True)
+
+# Generate unique filename with timestamp
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+filename = os.path.join(save_dir, f"search_flow_{timestamp}.png")
+
+# Save to current directory
+with open(filename, "wb") as f:
+    f.write(search_flow)
