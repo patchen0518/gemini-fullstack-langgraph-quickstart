@@ -301,7 +301,7 @@ builder.add_edge("finalize_answer", END)
 
 graph = builder.compile(name="pro-search-agent")
 
-# save the flow image to file
+# Save the flow image to file
 search_flow = graph.get_graph().draw_mermaid_png()
 save_dir = os.path.join(os.path.dirname(__file__), "_langgraph_flow")
 os.makedirs(save_dir, exist_ok=True)
